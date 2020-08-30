@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div {
+            background-color: gray;
+            display: inline-block;
+            margin: 30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+        }
+        .green.light {
+            background-color: green;
+        }
+        .yellow.light {
+            background-color: yellow;
+        }
+        .red.light {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="green"></div>
+    <div class="yellow"></div>
+    <div class="red"></div>
+
+    <div id="next">按钮</div>
+    <script>
+        function green () {
+            let lights = document.getElementsByTagName('div')
+            for (let i = 0; i < 3; i++) {
+                lights[i].classList.remove('light')
+            }
+            document.getElementsByClassName('green')[0].classList.add('light')
+        }
+
+        function red () {
+            let lights = document.getElementsByTagName('div')
+            for (let i = 0; i < 3; i++) {
+                lights[i].classList.remove('light')
+            }
+            document.getElementsByClassName('red')[0].classList.add('light')
+        }
+
+        function yellow () {
+            let lights = document.getElementsByTagName('div')
+            for (let i = 0; i < 3; i++) {
+                lights[i].classList.remove('light')
+            }
+            document.getElementsByClassName('yellow')[0].classList.add('light')
+        }
+
+        // 函数调用的方式
+        // 层级嵌套比较深 callback-hell 回调地狱
+        /*function go () {
+            green()
+            setTimeout(function () {
+                yellow()
+                setTimeout(function () {
+                    red()
+                    setTimeout(function () {
+                        go()
+                    }, 500)
+                }, 200)
+            }, 1000)
+        }*/
+
+        // Promise实现
+        // 链式的表达方式
+        function sleep (t) {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, t)
+            })
+        }
+
+        /*function go () {
+            green()
+            sleep(1000).then(() => {
+                yellow()
+                return sleep(200)
+            }).then(() => {
+                red()
+                return sleep(500)
+            }).then(go)
+        }*/
+
+        // async/await实现
+        // 纯粹语法层面的改进，让我们可以使用类似同步代码的写法来实现一个异步操作
+        /*async function go () {
+            while(true) {
+                green()
+                await sleep(1000)
+                yellow()
+                await sleep(200)
+                red()
+                await sleep(500)
+            }
+        }*/
+
+        // 如果是通过点击事件来控制交通灯的电亮
+        function happen (element, eventName) {
+            return new Promise((resolve, reject) => {
+                element.addEventListener(eventName, resolve, { once: true })
+            })
+        }
+
+        /*async function go () {
+            while (true) {
+                green()
+                await happen(document.getElementById('next'), 'click')
+                yellow()
+                await happen(document.getElementById('next'), 'click')
+                red()
+                await happen(document.getElementById('next'), 'click')
+            }
+        }*/
+
+        // generator函数
+        function * go () {
+            while(true) {
+                green()
+                yield sleep(1000)
+                yellow()
+                yield sleep(200)
+                red()
+                yield sleep(500)
+            }
+        }
+
+        function run (iterator) {
+            let { value, done } = iterator.next()
+            if (done) return
+            if (value instanceof Promise) {
+                value.then(() => {
+                    run(iterator)
+                })
+            }
+        }
+        go()
+    </script>
+</body>
+</html>
