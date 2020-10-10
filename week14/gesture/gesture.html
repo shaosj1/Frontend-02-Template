@@ -1,0 +1,8 @@
+<script src="./gesture.js"></script>
+<!-- 阻止右键弹出菜单 -->
+<body oncontextmenu="event.preventDefault()"></body>
+<script>
+  document.documentElement.addEventListener("tap", () => {
+    console.log("tap event trigger")
+  })
+</script>
